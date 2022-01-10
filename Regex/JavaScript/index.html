@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
+    <title>Prueba de REGEX en JavaScript</title>
+    <style>
+        #container{width: 500px;margin: 0 auto;}
+        #container input {width: 100%; font-size: 28px; padding: 10px;}
+        button{padding: 10px; font-size: 24px;}
+    </style>
+</head>
+<body>
+
+        <div id="container">
+            <input type="text" name="campo" id="campo" multiple>
+            <button id="boton">Comprobar</button>
+        </div>
+
+        <script>
+            const campo = document.querySelector('#campo');
+            const boton = document.querySelector('#boton');
+
+            boton.addEventListener('click', e => {
+                //const regex = /[0-9]{3}/g; //tes números
+                //const regex = /^[\s]*(.*?)[\s]*$/; //devuelve la cade de texto sin espacios al principio y al final
+                //const regex = /<([a-z0-6]+)([^<])*(?:>(.*)<\/\1>|\s+\/>)/ //etiquetas html
+                //const regex = /\B#(?:[a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b/; //color hexadecimal #fff o #ffffff (tambien con números #f25)
+                //const regex = /\b[\w.]+@[\w-]+(?:\.[\w]+)+\b/; //validar un email
+                //const regex = /^[a-z0-9_-]{3,16}$/; //nombre de usuario (entre 3 y 16 caracteres)
+                //const regex = /(?=^.{6,}$)((?=.*\w)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[&%$-_]))^.*/; //validar un pass (1 mayuscula, 1 minuscula, 1 numero y 1 caracter especial)
+                //const regex = /^\d{0,8}(\.\d{1,2})?$/; //Valida un precio (El número real puede ser de 8 cifras)
+                //const regex = /[a-zA-Z0-9]*/; //alfanumericos sin espacios
+                //const regex = /[a-zA-Z0-9 ]*/; //alfanumericos con espacios
+                //const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.?]*)/; //validar una dirección http o https
+                //const regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/; //validar un ipv4
+                //const regex = /([12]\d{3}-(0[0-9]|1[0-2])-(0[1-9]|[12]\d|3[01])))/; //validar fecha en formato YYYY-MM-dd
+                //const regex = /^((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/; //validar hora en formato HH:MM, 12 horas 0 opcional AM y PM
+                const regex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; //validar hora en formato HH:MM, 24 horas con el 0 no opcional
+
+
+                const validacion = campo.value.match(regex);
+                console.log(validacion);
+            })
+
+        </script>
+    
+</body>
+</html>

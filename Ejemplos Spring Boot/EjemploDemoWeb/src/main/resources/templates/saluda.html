@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Prueba de web</title>
+</head>
+<body>
+
+	<p th:text="'Hola, ' + ${nombre} + '!'"></p>
+
+	<table>
+		<th:block th:each="per : ${personas}">
+			<tr>
+				<td th:text=${per.id}>...</td>
+				<td th:text=${per.nombre}>...</td>
+			</tr>
+		</th:block>
+	</table>
+
+</body>
+</html>
