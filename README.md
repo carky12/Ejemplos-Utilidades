@@ -1,2 +1,128 @@
 # Ejemplos-Utilidades
-Ejemplos de códigos de utilidad
+
+En este repositorio encontrarás ejemplos, utilidades y código de prácticas para diferentes tecnologías como Maven, Java o JavaFX.
+Hay proyectos que repasan ciertos conceptos de Java y otros que sirven a modo de ejercicio práctico (recordatorio de como se hacen
+las cosas) como configuraciones de perfiles de Maven, mútiples POM, ejemplos de consumo de Apis, etc...
+
+Intentará estar ordenado y con su correspondiente documentación para cada proyecto.
+
+#### Creado por carky12
+
+## Índice
+
+- [ApiRest en Android](#apirest-en-android).
+
+
+## ApiRest Android
+
+Utilizamos la mítica api de pokemon (https://pokeapi.co/) para consumir los resultados y cargarlos en un RecyclerView. El proyecto se contruye
+en las capas de servicio, modelo y otra capa a mayores para realizar el adaptador y la gestión desde el MainActivity.
+
+En la capa de modelo definimos la entidad Pokemon y otra entidad para moldear la respuesta recibida desde la API (la moldearemos en un ArrayList de entidades
+Pokemon).
+En la capa de servicio definimos el Call de la librería retrofit para ser invocado desde el Activity.
+
+La lógica desde el activity constará de la creación de la llamada utilizando retrofit y cargar desde el offset 0 al iniciar la aplicación.
+También constará de un evento en el Scroll del RecyclerView para cargar más elementos desde el offset anterior y sumando de 20 en 20 en cada carga.
+
+Además se utilizará GsonConverterFactory.create() para parsear la respuesta de la API.
+
+## ApiRest Android Firebase
+
+Proyecto en el que se implementa un CRUD en Android utilizando como base de datos Firebase de Google.
+
+Se crea una colección Persona para una base de datos Realtime Database de Firebase. La colección estará vinculada a las clases del modelo de la aplicación. 
+El objeto Persona tendrá 5 atributos (uuid, nombre, apellido, correo y contraseña). El uuid será el id que utilizaremos para realizar las operaciones CRUD.
+
+Desarrollo sobre el Main Activity. Se implementa un menú superior para realizar las operaciones del CRUD. Se implementan 4 campos en pantalla además 
+de un ListView para listar los registros de la base de datos. Cuando se pulse en algún elemento de la lista se rellenan los textview con los valores del registro pulsado.
+
+Se implementan los métodos del CRUD a través de la API databaseReference de Firebase. Se inicializa Firebase en el método "iniciarFirebase" del activity main.
+
+Opcionalmente se prepara la aplicación para que reciba notificaciones tanto en primer plano como en segundo plano utilizando la tecnología 
+**Cloud Messaging de Firebase** :+1. Se prepara la aplicación para recibir mensajes personalizados por token o por tema al que los usuarios estén suscritos.
+
+## ApiRest Express MongoDB Async-Await
+
+Ejemplo en el que se utiliza la librería Express para, de forma asíncrona, realizar el consumo de una Api creada sobre una base de datos
+en local usando el motor de MongoDB.
+
+Para el ejemplo se modelan las entidades usuario y coche, con una relación 1-n desde usuarios a coches, es decir un usuario puede contener
+una lista de coches y un coche sólo puede tener un usuario asignado.
+
+Es imprescindible tener instalado MongoDB en local, además se utiliza el puerto 3000 para la aplicación. 
+
+La lógica de la aplicación se encuentra en el route correspondiente al users.js en el que se definen todas las operaciones del CRUD para
+dar forma a la API y proveer la información. La forma de hacer los métodos es a través de async await para romper la funcionalidad asíncrona.
+
+## ApiRest MongoDB
+
+Proyecto de Spring Boot para desarrollo de una API Rest sobre MongoDB. Necesario tener instalado MongoDB en local.
+
+Guía **resumen** de uso de MongoDB:
+
+- Para aplicaciones de crecimiento rápido.
+- Para aplicaciones con servidor en la nube.
+- Cuando necesitamos montar una base de datos lo más rápido posible.
+- Cuando los datos no van a tener la misma estructura.
+- Cuando la información es muy dinámica.
+- Cuando nuestra aplicación presente muchos usuarios al mismo tiempo.
+
+Mongo Server está compuesto por bases de datos, dentro de las cuales se encuentran las colecciones y dentro de éstas es donde tenemos los documentos.
+Las colecciones son los equivalentes NO-SQL a las tablas de las bases de datos relacionales. Los documentos serían los registros de esas tablas.
+Los documentos son pares de datos clave-valor. Los nombres de los campos siempre son cadenas de texto y los valores pueden ser string, number, 
+array (listas), date, boolean, object, etc...
+
+Los documentos son una abstracción de una entidad/objeto de la vida real.
+
+Ejemplo de documento Persona:
+
+```
+	{
+	"nombre":"Ronaldo",
+	"apellido":"Nazario",
+	"eddad":21
+	}
+		
+```
+
+Las colecciones representan un conjunto de documentos de una misma entidad. Por ejemplo una colección va a tener todos los usuarios, personas, productos, etc...
+
+###### Gestión de BBDD
+
+- use nombre bbdd: nos posicionamos en la base de datos. Si la base de datos no está creada el motor la crea.
+- db: saber en que base de datos estamos posicionados.
+- show dbs: muestra una lista con todas las bases de datos (solo muestra bases de datos no vacías).
+- db.usuarios.insert({}): esta es la forma implícita de crear la colección usuarios. Si no existe se crea.
+- db.createCollection("productos"): esta es la forma explícita de crear la colección productos.
+- show collections: muestra todas las colecciones que tenemos en la base de datos.
+- db.productos.drop(): borra la colección productos.
+- db.dropDatabase(): borra la base de datos en la que estamos situados.
+
+###### Consultas
+
+- db.productos.find(): devuelve los documentos de la colección productos.
+- db.productos.find().pretty(): devuelve los documentos de la colección productos de forma formateada (como si fuese un JSON formateado).
+- db.producgtos.update({"id": "1"}, {$set: {'valor': 20.45}}): sentencia para actualizar el campo valor del documento con primer campo "id" cuyo valor es "1".
+- db.producgtos.update({"id": "1"}, {$set: {'valor': 20.45}}, {multi: true}): sentencia para actualizar todos los documentos que cumplan la condición del primer campo.
+- db.productos.deleteOne({"id": "1"}): borra un documento cuyo campo "id" tenga valor "1".
+
+###### Consultas con parámetros
+
+- db.products.find({"valor": 15}): devuelve todos los productos que tienen valor 15.
+- db.productos.find({"valor": {$lt: 16}}): devuelve los productos que tienen valor menor que 16.
+- db.productos.find().limit(1): se limita la consulta a un resultado.
+- db.productos.find().sort({valor: 1}): devuelve los documentos ordenados de menor a mayor. Para ordenar de menor a mayor habría que indicar -1
+
+Las operaciones básicas son:
+
+- igualdad: {"campo": 0}
+- menor que: {"campo": {$lt: 15}}
+- menor o igual que: {"campo": {$lte: 15}}
+- mayor que: {"campo": {$gt: 15}}
+- mayor o igual que: {"campo": {$gte: 15}}
+- no es igual: {"campo": {$ne: 15}}
+- and: { {key: value1, key2: value2} }
+- or: {$or: [{key1: value1}, {key2: value2}]}
+- and + or: {key1: value1, $or: [{key2: {$lt: value2}, {key3: value 3}}]}
+
