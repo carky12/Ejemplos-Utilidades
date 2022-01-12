@@ -11,7 +11,22 @@ Intentará estar ordenado y con su correspondiente documentación para cada proy
 ## Índice
 
 - [ApiRest en Android](#apirest-en-android).
-
+- [ApiRest Android Firebase](#apirest-android-firebase).
+- [ApiRest Express MongoDB Async-Await](#apirest-express-mongodb-async-await).
+- [ApiRest MongoDB](#apirest-mongodb).
+- [Colecciones en Java](#colecciones-en-java).
+- [Ejemplo Básico con Spring](#ejemplo-básico-con-spring).
+- [Ejemplos Básicos con SpringBoot](#ejemplos-básicos-con-springboot).
+- [Expresiones Lambda](#expresiones-lambda).
+- [Programación Genérica en Java](#programación-genérica-en-java).
+- [Maven con JavaFX](#maven-con-javafx).
+- [Múltiple POM en Maven](#múltiple-pom-en-maven).
+- [Perfiles en Maven](#perfiles-en-maven).
+- [Pilas Stack en Java](#pilas-stack-en-java).
+- [RegEX](#regex).
+- [Scratch](#scratch).
+- [Sockets en Java](#sockets-en-java).
+- [Threads en Java](#threads-en-java).
 
 ## ApiRest Android
 
@@ -178,6 +193,11 @@ A modo de resumen podemos ver los siguientes elementos de la API Collections:
   - HashTable: obsoleto
   - TreeMap: ordenado por clave y poco eficiente en sus operaciones
 
+## Ejemplo Básico con Spring
+
+Proyectos de ejemplo de creación de un proyecto muy básico con Spring. Se definen dos controladores que capturan las peticiones para mostrar
+el contenido de una lista a modo de BBDD en la parte del JSP.
+
 ## Ejemplos Básicos con SpringBoot
 
 Proyectos de ejemplo de creación de dos proyectos con SrpingBoot.
@@ -209,8 +229,93 @@ El objetivo de los genericos es introducir seguridad del tipado y evitar casteos
 no son safety type (seguras frente al tipado), es decir se pueden guardar Strings o enteros. Con los genéricos evitamos esto y 
 añadimos la ventaja de no tener que hacer un casteo al recuperar un elemento de la lista. En contraposición los arrays por defecto si que son safety type.
 
-## Ejemplo Básico con Spring
+## Maven con JavaFX
 
-Proyectos de ejemplo de creación de un proyecto muy básico con Spring. Se definen dos controladores que capturan las peticiones para mostrar
-el contenido de una lista a modo de BBDD en la parte del JSP.
+Proyecto 
+
+## Múltiple POM en Maven
+
+Proyecto 
+
+## Perfiles en Maven
+
+Proyecto 
+
+## Pilas Stack en Java
+
+Proyecto 
+
+## Maven con JavaFX
+
+Proyecto 
+
+## RegEX
+
+Proyecto en el que se ven ejemplos de uso de expresiones regulares. Para la parte de JavaScript se puede usar la página https://regexr.com/
+
+Se implementan ejemplos para las siguientes funcionalidades:
+
+- Validación de NIF
+- Validación de Email
+- Validación de números enteros
+- Validación de números reales
+- Validación de IP
+- Validación de patrón numérico de matrícula
+- Validación de URL
+- Validación de texto sin espacios al principio y al final
+- Validación de etiequetado HTML
+- Validación de un nombre de usuario
+- Validación de una password fuerte
+- Validación de formatos de fechas
+
+Una expresión regular es una secuencia de caracteres que conforma un patrón de búsqueda. Se utilizan principalmente para la búsqueda de patrones de cadenas de caracteres 
+u operaciones de sustituciones. Las expresiones regulares son patrones utilizados para encontrar una determinada combinación de caracteres dentro de una cadena de texto. 
+Las expresiones regulares proporcionan una manera muy flexible de buscar o reconocer cadenas de texto.
+
+###### Coincidencias Básicas
+
+- .	Cualquier Caracter, excepto nueva linea
+- \d	Cualquier Digitos (0-9)
+- \D	No es un Digito (0-9)
+- \w	Caracter de Palabra (a-z, A-Z, 0-9, _)
+- \W	No es un Caracter de Palabra
+- \s	Espacios de cualquier tipo. (espacio, tab, nueva linea)
+- \S	No es un Espacio, Tab o nueva linea.
+###### Limites
+
+- \b	Limite de Palabra
+- \B	No es un Limite de Palabra
+- ^	Inicio de una cadena de texto
+- $	Final de una cadena de texto
+
+###### Cuantificadores
+
+- *	0 o Más
+- +	1 o Más
+- ?	0 o Uno
+- {3}	Numero Exacto
+- {3,4}	Rango de Numeros (Minimo, Maximo)
+
+###### Conjuntos de Caracteres
+
+- []	Caracteres dentro de los brackets
+- [^]	Caracteres que NO ESTAN dentro de los brackets
+
+###### Grupos
+
+- ()	Grupo
+-     Uno u otro
+
+## Scratch
+
+Proyecto 
+
+## Sockets en Java
+
+Proyecto 
+
+## Threads en Java
+
+Proyecto 
+
 
