@@ -1,4 +1,4 @@
-package model;
+package ejemplo.model;
 
 public class CollectionsClients {
 

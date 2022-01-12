@@ -78,11 +78,11 @@ Los documentos son una abstracción de una entidad/objeto de la vida real.
 Ejemplo de documento Persona:
 
 ```
-	{
-	"nombre":"Ronaldo",
-	"apellido":"Nazario",
-	"eddad":21
-	}
+{
+"nombre":"Ronaldo",
+"apellido":"Nazario",
+"eddad":21
+}
 		
 ```
 
@@ -125,4 +125,92 @@ Las operaciones básicas son:
 - and: { {key: value1, key2: value2} }
 - or: {$or: [{key1: value1}, {key2: value2}]}
 - and + or: {key1: value1, $or: [{key2: {$lt: value2}, {key3: value 3}}]}
+
+## Colecciones en Java
+
+Proyecto de ejemplo de uso de la API collections en Java.
+
+Vemos el uso de la interfaz para ordenar listas de enteros y listas de Strings. Además vemos ejemplos de ordenación de listas de objetos sobreescribiendo el método
+CompareTo en la definición del objeto. En este método es donde implementamos la condición y campo de comparación.
+
+Hay ejemplos de HashMap que no permite almacenar dos valores con la misma clave, y la ordenación es de forma aleatoria, aunque si la clave
+es un integer lo ordenará ascendentemente por valor de clave. De los valores duplicados se queda con el último.
+
+Hay ejemplos con TreeMap que no admite duplicados y ordena los valores de mapa de forma ascendente y hay ejemplos con LinkedHashMap que no admite duplicados 
+y ordena los valores en función de en qué orden se agregan a la lista.
+
+A modo de resumen podemos ver los siguientes elementos de la API Collections:
+
+###### SET: 
+ 
+- No permiten duplicados
+- Uso sencillo de add
+- No tienen acceso aleatorio
+- Poco eficientes ordenando
+- Los iterators sólo modifican hacia adelante
+- Tipos: 
+  - TreeSet: ordenado pero poco eficiente. De igual implementación que el hashset pero permite ordenar los elementos aunque no de forma eficiente. Por defecto se ordenan alfabéticamente.
+  - LinkedHashSet: ordenación por entrada, eficiente al acceder, no eficiente al agregar 
+  - HashSet: es de rápido acceso, no permite duplicados (utiliza los métodos equals y hashCode del objeto contenido en la lista), no permite ordenar los elementos, no tiene acceso aleatorio y no se puede borrar elementos de la lista mientras estamos recorriendolo con un bucle for (se podría borrar si iteramos los elementos de la lista con un iterador.
+  - EnumSet: para tipos enumerados
+
+###### LIST:
+
+- No hay restricción con agregar y eliminar elementos
+- Permiten ordenar (.sort())
+- Tienen acceso aleatorio
+- ListIterator modifica en cualquier dirección (no sólo hacia adelante)
+- Tipos: 
+  - ArrayList: poco eficientes en la eliminación de elementos. Al eliminar un elemento se desplazan todos los posteriores
+  - LinkedList: almacena los elementos en nodos que no tienen por que estar adyacentes. Los nodos guardan el dato y 
+    un enlace al elemento posterior y anterior). Si se elimina un elemento sólo hay que actualizar los enlaces del nodo. Son
+    listas más eficientes. Muy eficiente para la eliminación y modificación de elementos. Soportan listIterator para iterar los elementos
+
+###### MAPS:
+		
+- Asocian clave-valor
+- No se pueden repetir las claves
+- Tienen acceso aleatorio
+- ListIterator modifica en cualquier dirección (no sólo hacia adelante)
+- Tipos: 
+  - HashMap: muy eficiente en lectura y escritura pero no permite ordenación
+  - LinkedHashMap: ordenado por inserción, perimte ordenar por uso, eficiente lectura y poca eficiente de escritura
+  - HashTable: obsoleto
+  - TreeMap: ordenado por clave y poco eficiente en sus operaciones
+
+## Ejemplos Básicos con SpringBoot
+
+Proyectos de ejemplo de creación de dos proyectos con SrpingBoot.
+
+Uno para un arquetipo de proyecto web y otro para un arquetipo de proyecto de consola.
+
+## Expresiones Lambda
+
+Proyecto con la sintáxis básica introducida en Java 8 para expresiones lambda. Los ejemplos comparan la sintaxis clásica con las ventajas de las
+expresiones lambda. Los ejemplos son básicos y se centran en una operación aritmética básica y en la ordenación de una lista.
+
+Las ventajas de las expresiones lambda no sólo son a nivel de sintaxis si no que se prodría profundizar en que son parte del paradigma de programación
+declarativa versus al paradigma de programación imperativo. Java 8 se basa fuertemente en las expresiones lambda que son funciones anónimas, esenciales para 
+entender la programación declarativa.
+
+## Programación Genérica en Java
+
+Proyecto en el que se ven ejemplos muy básicos del uso de tipos genéricos en Java. 
+
+La convención de nombres para los tipos de parámetros es:
+- E:  Elemento
+- K: Key
+- N: Number
+- T: Tipo
+- V: Value
+- S, U, V, etc: Más tipos...
+
+El objetivo de los genericos es introducir seguridad del tipado y evitar casteos innecesarios. Por ejemplo las listas por defecto
+no son safety type (seguras frente al tipado), es decir se pueden guardar Strings o enteros. Con los genéricos evitamos esto y 
+añadimos la ventaja de no tener que hacer un casteo al recuperar un elemento de la lista. En contraposición los arrays por defecto si que son safety type.
+
+## Ejemplo Básico con Spring
+
+Proyectos de ejemplo de creación de un proyecto muy básico con Spring. Se definen dos controladores que capturan las peticiones para mostrar
+el contenido de una lista a modo de BBDD en la parte del JSP.
 

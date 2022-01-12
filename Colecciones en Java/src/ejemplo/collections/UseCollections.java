@@ -1,4 +1,4 @@
-package collections;
+package ejemplo.collections;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import model.CollectionsClients;
+import ejemplo.model.CollectionsClients;
 
 public class UseCollections {
 	
