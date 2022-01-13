@@ -231,25 +231,290 @@ añadimos la ventaja de no tener que hacer un casteo al recuperar un elemento de
 
 ## Maven con JavaFX
 
-Proyecto 
+Proyecto en el que lo importante está en el POM, ya que se utiliza un plugin de compilación javafx-maven-plugin para realizar el empaquetado del proyecto JavaFX.
+
+El plugin es:
+
+```
+<plugin>
+	<groupId>com.zenjava</groupId>
+	<artifactId>javafx-maven-plugin</artifactId>
+	<version>8.8.3</version>
+	<configuration>
+		<vendor>MyVendor</vendor>
+		<mainClass>app.AppMain</mainClass>
+		<appName>MyApp</appName>
+		<bundleArguments>
+			<icon>${project.basedir}/src/main/resources/img/app.ico</icon>
+		</bundleArguments>
+	</configuration>
+</plugin>
+```
+
+Y para las configuraciones de Maven build tenemos 3 opciones:
+
+- jfx:jar: Se realiza el empaquetado en un archivo .jar.
+- jfx:native: Se realiza el empaquetado del proyecot en un archivo .exe.
+- jfx:run: Se raliza una ejecución del proyecto compilado.
+
+Opcionalmente se puede utilizar el plugin maven-antrun-plugin para realizar configuraciones adicionales antes de realizar el compilado, tales
+como crear directorios, cargar datos iniciales, etc...
+
+Con respecto a la aplicación es una simple ventana FXML diseñada con SceneBuilder y una gestión de datos con una base de datos H2.
+
+La página de GitHub del proyecto es la siguiente https://github.com/javafx-maven-plugin/javafx-maven-plugin
 
 ## Múltiple POM en Maven
 
-Proyecto 
+En este proyecto tenemos 3 proyectos. A modo de ejemplo están los proyectos core y web que son proyectos Maven vacíos. En tercer lugar tenemos
+un proyecto "EjemploProyectos" en el que tenemos un POM en el que están definidos los dos proyectos anterioes como dependencias de módulo.
+
+```
+  <packaging>pom</packaging>
+  <name>Ejemplo de varios proyectos</name>
+  <description>Ejemplo de varios proyectos</description>
+  <modules>
+  	<module>proyecto-core</module>
+  	<module>proyecto-web</module>
+  </modules>
+```
+
+Si el proyecto cuenta con diferentes archivos pom se podrá indicar cual usar a la hora de la construcción del proyecto. 
+Para ello, desde el IDE Eclipse se ejecuta Run As Maven build... y en el apartado goals se pondrá -f "nombre del pom a usar".xml "acción a realizar". 
+
+Podemos tener varios proyectos agrupados en un mismo proyecto Maven. La ventaja es que se tendrán funcionalidades modularizadas en diferentes proyectos.
+Para generar el proyecto padre se creará un proyecto Maven normal. La particularidad es que seleccionaremos pom en la opción <package>.
+Para agregar proyectos hijos se crearán proyectos tipo Maven Module, seleccionando el proyecto padre en la configuración inicial del proyecto. 
+En el proyecto hijo seleccionaremos jar en la opción <package>
+En el pom del proyecto hijo aparecerá la etiqueta <parent> haciendo referencia la proyecto padre.
+
+```
+ <parent>
+   <groupId>com.example.projects</groupId>
+   <artifactId>EjemploProyectos</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+ </parent>
+```
+
+Será necesario referenciar a los proyectos que sean dependencias en el pom de la aplicación principal. Por ejemplo si tenemos un proyecto padre y uno de 
+los hijos tiene arquetipo webapp, podremos indicar en el pom del proyecto webapp las referencias a los otros proyectos hijos. Esto hará que cuando se haga un 
+Maven build (goals = package) se generen los jar o war de cada proyecto hijo.
+
+#### Generación de un EAR multiproyecto
+
+Veamos un ejemplo sencillo de un proyecto maven para generar un fichero EAR que tenga un módulo ejb que a su vez depende de librerías java normales.
+
+Para generar todo esto necesitamos estrictamente dos proyectos maven: Encapsularemos todo en 3 proyectos:
+
+- Un proyecto maven con nuestro código, que sea capaz de generar un jar/war con nuestros EJBs. Este proyecto tendrá dependencias de librerías java normales. Llamaremos a este proyecto ejb-module.
+- Un proyecto maven que generará el fichero ear para desplegar en nuestro servidor de aplicaciones. Este fichero ear tendrá dentro el jar con nuestra aplicación (el ejb-module) y los jar de las distintas librerías de las que depende. Llamaremos a este proyecto ear-module.
+- Para facilitar el proceso de compilado, meteremos estos dos proyectos maven como proyectos hijos de un proyecto maven padre, al que llamaremos ear-project-example. De esta forma, compilando el proyecto maven padre, se compilarán los dos proyectos hijos, primero nuestra aplicación ejb-module, y luego el ear-module que genererá el ear con todo.
+
+En el POM del proyecto EJB tendremos
+
+```
+ <parent>
+   <groupId>com.examples</groupId>
+   <artifactId>ear-project-example</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+ </parent>
+ <artifactId>ejb-module</artifactId>
+ <packaging>ejb</packaging>
+ 
+ <plugin>
+   <groupId>org.apache.maven.plugins</groupId>
+   <artifactId>maven-ejb-plugin</artifactId>
+   <version>2.5.1</version>
+   <configuration>
+     <ejbVersion>3.1</ejbVersion>
+     <archive>
+       <manifest>
+         <addClasspath>true</addClasspath>
+         <classpathPrefix>lib/</classpathPrefix>
+       </manifest>
+     </archive>
+   </configuration>
+ </plugin>
+```
+
+En primer lugar vemos la referencia al proyecto padre. Y en segundo lugar vemos el plugin para la generación de EJB.
+
+Para el POM del proyecto EAR:
+
+```
+ <parent>
+   <groupId>com.examples</groupId>
+   <artifactId>ear-project-example</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+ </parent>
+ <artifactId>ear-module</artifactId>
+ <packaging>ear</packaging>
+ 
+ <dependencies>
+   <dependency>
+     <groupId>com.examples</groupId>
+     <artifactId>ejb-module</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+     <type>ejb</type>
+   </dependency>
+ </dependencies>
+ 
+ <plugin>
+   <artifactId>maven-ear-plugin</artifactId>
+   <version>2.10.1</version>
+   <configuration>
+     <defaultLibBundleDir>lib</defaultLibBundleDir>
+     <modules>
+       <ejbModule>
+         <groupId>com.chuidiang.examples</groupId>
+         <artifactId>ejb-module</artifactId>
+       </ejbModule>
+     </modules>
+   </configuration>
+ </plugin>
+```
+
+Donde vemos en primer lugar la referencia al proyecto padre, en segundo lugar la dependencia al proyecto EJB y en tercer lugar el plugin de generación EAR.
+
+El POM del proyecto padre:
+
+```
+ <artifactId>ear-project-example</artifactId>
+ <version>0.0.1-SNAPSHOT</version>
+ <packaging>pom</packaging>
+ <modules>
+   <module>ejb-module</module>
+   <module>ear-module</module>
+ </modules>
+```
+
+Vemos las referencias a los proyectos hijos (EJB y EAR).
+
+Para generar el archivo EAR bastará con realizar un mvn package sobre el proyecto padre.
 
 ## Perfiles en Maven
 
-Proyecto 
+Proyecto vacío de funcionalidad pero en el que podemos ver un ejemplo de utilización de los perfiles de Maven aplicado a distintos entornos
+de trabajo. Se definen 3 archivos .properties, uno por cada entorno de trabajo en los cuales tendríamos definidos por ejemplo las bases de datos
+a utilizar en cada entorno (desarrollo, pruebas y producción por ejemplo).
 
-## Pilas Stack en Java
+En estos ficheros de propiedades tenemos configurada una variable de entorno ${env} que nos indicará el entorno en el que trabajar en función
+del perfil de Maven seleccionado para la compilación.
 
-Proyecto 
+Se podrán parametrizar las compilaciones (builds) del proyecto en función de los perfiles definidos en el archivo pom.
+Esto es especialmente útil cuando se tienen que parametrizar diferentes configuraciones en función del entorno de desarrollo en el que se esté trabajando.
+Se definirán tantos archivos de propiedades (properties o xml) como entornos se deseen usar.
 
-## Maven con JavaFX
+En el archivo pom se definirá una propiedad para el entorno:
 
-Proyecto 
+```
+ <properties>
+   <maven.compiler.source>1.8</maven.compiler.source>
+   <maven.compiler.target>1.8</maven.compiler.target>
+   <env>enviroment.des</env>
+ </properties>
+```
 
-## RegEX
+Esta es la propiedad que se asignará por defecto al proyecto a la hora de hacer build. En la sección build:
+
+```
+ <build>
+   <filters>
+     <filter>src/main/resources/${env}.properties</filter>
+   </filters>
+   <defaultGoal>install</defaultGoal>
+   <resources>
+     <resource>
+       <directory>src/main/resources</directory>
+       <filtering>true</filtering>
+       <includes>
+         <include>*.properties</include>
+       <include>*.xml</include>
+       </includes>
+     </resource>
+   </resources>
+   <finalName>sample-eclipse-carlos</finalName>
+ </build>
+```
+ 
+En esta sección <build> estamos indicando la ruta donde estarán los ficheros de propiedades, además de que se tengan en cuenta tanto archivos properties como xml. 
+Adicionalmente se establece el nombre final del artefacto generado.
+En la sección <profiles> es donde se definirán los diferentes perfiles. A continuación podemos ver como se establece la propiedad <env> al valor del archivo 
+de propiedades adecuado en función del perfil. Opcionalmente se utiliza el p plugin antrun de maven con el objetivo de mostrar un mensaje en la generación del artefacto.
+```
+
+<profiles>
+   <profile>
+     <id>pru</id>
+     <properties>
+       <env>enviroment.pru</env>
+     </properties>      
+     <build>
+       <plugins>
+         <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-antrun-plugin</artifactId>
+           <version>1.1</version>
+           <executions>
+             <execution>								
+               <phase>test</phase>
+               <goals>
+                 <goal>run</goal>
+               </goals>
+               <configuration>
+                 <tasks>
+                   <echo>****USANDO ENVIROMENT.PRU.PROPERTIES****</echo>
+                 </tasks>									
+               </configuration>
+             </execution>
+           </executions>
+         </plugin>
+       </plugins>
+     </build>
+   </profile>
+   
+   <profile>
+     <id>pro</id>
+     <properties>
+       <env>enviroment.pro</env>
+     </properties>      
+     <build>
+       <plugins>
+         <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-antrun-plugin</artifactId>
+           <version>1.1</version>
+           <executions>
+             <execution>								
+               <phase>test</phase>
+               <goals>
+                 <goal>run</goal>
+               </goals>
+               <configuration>
+                 <tasks>
+                   <echo>****USANDO ENVIROMENT.PRO.PROPERTIES****</echo>
+                 </tasks>									
+               </configuration>
+             </execution>
+           </executions>
+         </plugin>
+       </plugins>
+     </build>
+   </profile>
+ </profiles>
+ ```
+
+## Colas y Stack en Java
+
+Proyecto en el que se usan ejemplos básicos para comprender el uso de las colas (Queue) y las pilas (Stack) en Java.
+
+Una pila puede albergar elementos duplicados, lo importante es el orden de entrada. Para buscar un elemento en la pila (cuenta desde el final de la pila al principio).
+Los elementos se eliminan en orden descendente de entrada en la pila (LIFO).
+
+En las colas para un objeto necesitamos indicarle a la cola la prioridad del campo para ello podemos implementar en nuestra clase Persona la interfaz comparable.
+Los elementos se eliminan por orden ascendente de entrada en la cola (FIFO).
+
+## RegEx
 
 Proyecto en el que se ven ejemplos de uso de expresiones regulares. Para la parte de JavaScript se puede usar la página https://regexr.com/
 
@@ -304,16 +569,69 @@ Las expresiones regulares proporcionan una manera muy flexible de buscar o recon
 ###### Grupos
 
 - ()	Grupo
--     Uno u otro
+- 		Uno u otro
 
 ## Scratch
 
-Proyecto 
+Proyectos de Scratch a nivel educativo.
+
+- Adivina un número: juego de adivinar un número con funciones de iniciación a las estructuras alternativas y secuenciales de código.
+- Juego de Fútbol: juego de pasar una pelota entre dos campos. Se trabajan detalles de interfaz, estructuras alternativas, bucles y lógica para implementar el juego y las colisiones de los objetos.
 
 ## Sockets en Java
 
-Proyecto 
+Proyecto completo de Sockets en Java en el que se crea una aplicación de chat completa (cliente-servidor). Se crea un cliente con su interfaz completa. 
+La interfaz está hecha con Java Swing directamente en código (JFrame y JPanel con componentes de interacción para el usuario como cajas de texto y botones).
+
+Además se implementa un Servidor con su interfaz, que lo único que tiene es una caja de texto en el que se van recibiendo los mensajes y desde que clientes.
+
+Para probar el proyecto se tiene que distribuir a otro ordenador y ejecutar la clase Cliente y en uno de los ordenadores ejecutar la clase que hace de Servidor.
+
+Al hacer click en el botón Enviar del Cliente se crea el socket a una dirección IP de la red local y a un puerto determinado, se crea el paquete de envío y se
+genera un ObjectOutputStream para enviar los datos.
+
+Además se crea un hilo que está permanentemente a la escucha de recibir nuevos mensajes desde el servidor.
+
+En el servidor también tenemos un hilo de ejecución a modo de proceso cron que está permanentemente a la escucha de mensajes desde algún cliente. En el momento que 
+recibe un mensaje lo procesa, pintando en la caja de texto de la interfaz del servidor el mensaje y el origen y creando un socket para enviar la información 
+al destino.
 
 ## Threads en Java
 
-Proyecto EN EL QU
+Proyecto en el que podemos ver ejemplos básicos de utilización de Hilos en Java. Son ejemplos para entender la teoría de los hilos y poder
+aplicarla en otros proyectos de mayor embergadura.
+
+La computación concurrente es una forma de cómputo en la cual varios cálculos se realizan concurrentemente, y no uno a la vez de forma secuencial.
+Es una característica propia de un sistema, ya sea un programa, una computadora o una red, en la cual existe un punto separado de ejecución o "hilo de control" para cada proceso. Un sistema concurrente es aquel donde un cálculo puede avanzar sin esperar a que el resto de los cálculos se completen.
+
+#### Creación de hilos
+Se tendrá que crear una clase que implemente la interfaz Runnable. Esto nos obligará a sobrescribir el método run() en nuestra clase. Escribir el código con la lógica del programa dentro del método run(). Instanciar la clase creada y almacenar la instancia en una variable de tipo Runnable. Crear una instancia de la clase Thread pasando como parámetro al constructor de Thread el objeto Runnable anterior. Poner en marcha el hilo de ejecución con el método start() de la clase Thread
+Otra forma de crear una aplicación multitarea con hilos es que la clase que realiza la lógica herede de Thread, sobrescribiendo el método run() en dicha clase. Al crear una instancia de esa clase ya podremos utilizar el método start() para arrancar el hilo.
+
+#### Interrupción de hilos
+Para retardar la ejecución de un hilo se puede hacer uso del método estático sleep() perteneciente a la clase Thread. Al utilizar sleep() sobre un hilo, dicho hilo queda bloqueado. No se puede hacer nada con el hilo, ni siquiera solicitar su interrupción, aún así si se solicita a través del método interrupt() se lanza una excepción InterruptException.
+
+Se puede interrumpir el hilo utilizando la instancia que realiza el start() y llamar al método stop(). Este método está obsoleto, aunque funciona. La interrupción se podrá llevar a cabo con el método interrupt(), sin embargo si el hilo utiliza el método sleep() se lanzará una excepción InterruptedException y no se podrá detener el hilo. Al capturar la excepción en el catch se puede hacer una salida del programa para solucionar el problema. Para la interrupción de un hilo se puede utilizar los métodos:
+
+- interrupt(): método de clase (se utiliza sobre la clase Thread)
+- isInterrupted(): método de instancia (se utiliza sobre la instancia de un hilo que se ha iniciado con el método start())
+
+Se puede acceder al hilo actual en ejecución a través de Thread.currentThread
+
+#### Trabajar con varios hilos
+Para trabajar con varios hilos la clave es tener una instancia de la clase que implementa Runnable por cada hilo que se quiera ejecutar, con ello también podremos detener cada hilo de forma independiente.
+
+#### Estado de los hilos
+- Nuevo: cuando se instancia el hilo pero aún no se ha llamado al método start()
+- Ejecutable: cuando se llama al método start()
+- Bloqueado: cuando está en ejecución y se llama al método sleep()
+- Muerto: cuando ocurre una excepción y no se captura o cuando termina de forma correcta
+
+#### Sincronización de hilos
+Puede ser deseable que no comience la ejecución de un hilo hasta que termine el anterior. Para realizar esto se utiliza el método join() de la clase Thread. Se puede realizar la llamada al método join() después de la ejecución del método start(). Esta forma de sincronizar los hilos depende del programador, ya que es el encargado de decirle al programa el orden de ejecución de los hilos con la instrucción join(). Si queremos que los hilos se sincronicen de forma automática y no estar obligados a indicarlo de forma explicita podemos utilizar la clase ReentrantLock correspondiente a la interfaz Lock. Tendremos que rodear el método que queremos proteger de la concurrencia de hilos con las instrucciones lock() y unlock() correspondientes a la instancia de clase ReentranLock.
+
+**Condiciones en los bloqueos**
+Para establecer condiciones en los bloqueos utilizando la clase ReentranLock podemos utilizar el método newCondition() que devuelve un objeto de tipo Condition, que es una interfaz que implementa el método await() y signalAll() que son los encargados de poner el hilo a la espera de que se satisfaga la condición y de avisar al resto de hilos de que se ha liberado la condición de bloqueo respetivamente.
+
+**Synchronized**
+Para realizar una sincronización se puede utilizar la palabra reservada synchronized. Para ello basta saber que cada clase va a tener disponible los métodos wait() y notifyAll() ya que son métodos pertenecientes a la clase Object. Estos métodos son análogos a los métodos await() y signalAll() de la interfaz Condition.
